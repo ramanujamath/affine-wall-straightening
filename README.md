@@ -68,3 +68,7 @@ These need NumPy. Run them from anywhere, for example `python3 verification/chec
 | `example72_reduction.py` | Same reduction as the supplementary script, via the full library. | The 17 symbols of Example 7.2. |
 | `check_example72_numerics.py` | The complete reduction of Example 7.2, numerically, with tail extrapolation. | X ≈ 0.7696049264; the two sides agree to about 10⁻¹⁰. Takes a minute or so. |
 | `output_sizes.py` | Output sizes against the bounds of Theorem 3.5 and Proposition 5.8, and the top-weight part of the staircase. | Sizes far below the bounds; the staircase top-weight part is ζ*(2,1,1,1) term by term. |
+
+## Licence
+
+The code in this repository is released under the MIT License; see `LICENSE`.
