@@ -1,0 +1,846 @@
+\documentclass[11pt]{amsart}
+\usepackage[margin=1.1in]{geometry}
+\usepackage{amssymb,amsmath,mathtools,enumitem}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem*{theoremA}{Theorem A}
+\newtheorem*{theoremB}{Theorem B}
+\newtheorem*{theoremC}{Theorem C}
+\newtheorem*{theoremD}{Theorem D}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{question}[theorem]{Question}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\numberwithin{equation}{section}
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Li}{\operatorname{Li}}
+\newcommand{\ev}{\operatorname{ev}}
+\newcommand{\cS}{\mathcal{S}}
+\newcommand{\fL}{\mathfrak{L}}
+\newcommand{\fD}{\mathfrak{D}}
+\newcommand{\Asc}{\operatorname{Asc}}
+\newcommand{\gr}{\operatorname{gr}}
+\newcommand{\one}{\mathbf{1}}
+\newcommand{\s}{\mathbf{s}}
+\newcommand{\z}{\mathbf{z}}
+\newcommand{\tb}{\mathbf{t}}
+\newcommand{\cb}{\mathbf{c}}
+\newcommand{\kb}{\mathbf{k}}
+\newcommand{\hb}{\mathbf{h}}
+\newcommand{\yb}{\mathbf{y}}
+\newcommand{\lb}{\boldsymbol{\ell}}
+\newcommand{\Hs}{\mathcal{H}}
+\newcommand{\lfl}{\lfloor}
+\newcommand{\rfl}{\rfloor}
+
+\title[Affine-wall straightening for Hurwitz--Lerch MPLs]{Finite affine-wall straightening for rational\\ Hurwitz--Lerch multiple polylogarithms}
+\author{Ramanuja}
+\address{Kachhubi, P.O.\ Tamuria, Lakhnaur Block, Madhubani, Bihar 847410, India}
+\email{ramanujamath@yahoo.com}
+\subjclass[2020]{Primary 11M32; Secondary 11M35, 11M41, 33B30}
+\keywords{multiple polylogarithms, Hurwitz zeta functions, Lerch zeta functions, cyclotomic multiple zeta values, rational shifts, depth filtration, wall-crossing, discrete Fourier transform}
+
+\begin{document}
+
+\begin{abstract}
+We give an exact, finite wall-crossing algorithm expressing strict Hurwitz--Lerch multiple polylogarithms with independent rational shifts as explicit linear combinations of ordinary multiple polylogarithms. The basic identity compares the summation chamber $n_1>\dots>n_r>0$ with the \emph{lifted chamber} $n_1-t_1>\dots>n_r-t_r>0$. The two chambers differ along finitely many coordinate and edge walls. The lifted sum is an explicit tensor discrete Fourier transform of ordinary multiple polylogarithms. This single comparison contains both the integer-translation walls and the residue-equality (ascent) walls. Every wall has strictly smaller depth.
+The top-depth part is \emph{local}: it depends only on the summand, not on the affine chamber. It is independent of root choices, and independent of the common denominator modulo distribution relations. We also determine the next graded piece explicitly: the depth $r-1$ component is a finite sum over edge and coordinate walls. The top-weight component is a sum over ``stuffle diagonals'' along edges with $t_i-t_{i+1}\in\Z_{\ge1}$.
+At roots of unity we prove that, whenever $(s_1,\xi_1)\neq(1,1)$, the potentially divergent first-colour modes cancel exactly in the output. The cancellation happens pole by pole, through a structure lemma for simple-pole pieces. The cyclotomic specialization is therefore a regularization-free combination of convergent cyclotomic multiple polylogarithms. A depth-one computation shows how the excluded case $(1,1)$ acquires a $\log q$ correction under stuffle regularization. Examples, a complete reduction of a depth-three example to alternating multiple zeta values, and a staircase evaluation exhibiting depth collapse are included.
+\end{abstract}
+
+\maketitle
+
+%=====================================================================
+\section{Introduction}
+%=====================================================================
+
+Multiple Hurwitz zeta functions with independent shift parameters arise naturally alongside Euler--Zagier multiple zeta values. Murty and Sinha developed their analytic continuation and related multiple $L$-functions \cite{MS06}. Enjalbert and Minh studied Hurwitz polyz\^etas from generating-series, integral, translation and algebraic viewpoints \cite{EM07,EM12}. Gun and Saha investigated multiple Lerch variants and their continuation \cite{GS18}. Recent work emphasizes Hurwitz-type multiple polylogarithms, Schur variants and cyclotomic symmetry and parity formulas \cite{Iha+24,MN25,Xu26,Rui25,LX26}.
+
+\subsection*{Relation to earlier work}
+That multiple sums with rational shifts reduce to cyclotomic multiple polylogarithms is not new, and we do not claim it as such.
+\begin{itemize}[leftmargin=1.5em]
+\item At level two, Hoffman's multiple $t$-values \cite{Hof19}, Kaneko--Tsumura's multiple $T$-values \cite{KT20} and Xu--Zhao's multiple mixed values \cite{XZ22} are sums with parity restrictions. Each is shown to be a rational combination of alternating multiple zeta values. The mechanism is the $q=2$ case of the residue filter in Proposition~\ref{prop:fourier}.
+\item In the physics literature, Ablinger, Bl\"umlein and Schneider studied cyclotomic harmonic sums with denominators $(ak+b)^c$. They related their $N\to\infty$ limits to coloured multiple zeta values \cite{ABS11}.
+\item Terasoma's theory of zeta values of rational convex cones \cite{Ter04} shows, for absolutely convergent sums, that such values lie in the space of cyclotomic multiple zeta values. This covers the \emph{qualitative} content of our Theorem~\ref{thm:main} in the absolutely convergent cyclotomic case.
+\item For the Fourier aspect, Enjalbert and Minh proved a converse under an ordered cumulative-gap condition \cite[Prop.~3.4]{EM07}. Monoidal-alphabet methods describe affine harmonic sums algebraically \cite{Pha26}.
+\end{itemize}
+What the present paper adds is \emph{quantitative and structural}:
+\begin{itemize}[leftmargin=1.5em]
+\item an explicit, finite algorithm, with explicit top-depth, depth $r-1$ and top-weight components;
+\item a precise description of the walls (the ascent set and its integer-shift generalization);
+\item a regularization-free boundary theorem with an explicit cancellation mechanism.
+\end{itemize}
+Depth and weight are taken in the formal sense of Section~\ref{sec:formal}. We make no linear-independence claims about numerical values.
+
+\subsection*{Set-up}
+Fix $r\ge1$, exponents $\s=(s_1,\dots,s_r)\in\N^r$ with $w=|\s|=s_1+\dots+s_r$, colours $0<|z_j|<1$, and rational shifts $t_j\notin\Z_{>0}$. Put
+\begin{equation}\label{eq:H}
+\Hs_\s(\z;\tb)=\sum_{n_1>\dots>n_r>0}\ \prod_{j=1}^r\frac{z_j^{n_j}}{(n_j-t_j)^{s_j}} .
+\end{equation}
+Choose a common denominator $q\ge1$ and write $t_j=c_j/q-k_j$ with $0\le c_j<q$, $k_j\in\Z$. Fix $q$th roots $\alpha_j^q=z_j$ and put $\omega=e^{2\pi i/q}$.
+
+\subsection*{Main results}
+The key observation is that the substitution $u_j=q(n_j-t_j)$ turns the \emph{lifted chamber}
+\[
+\Lambda(\tb)=\{\,n\in\Z^r:\ n_1-t_1>n_2-t_2>\dots>n_r-t_r>0\,\}
+\]
+into a congruence-restricted Euler--Zagier chamber. On $\Lambda(\tb)$ the sum is therefore a tensor discrete Fourier transform of ordinary multiple polylogarithms. The original chamber and $\Lambda(\tb)$ differ only along finitely many walls:
+\begin{itemize}[leftmargin=1.5em]
+\item \emph{coordinate walls} $n_j=a$, for $a$ between $1$ and $\lfl t_j\rfl$;
+\item \emph{edge walls} $n_i-n_{i+1}=g$, for $g$ between $1$ and $\lfl t_i-t_{i+1}\rfl$.
+\end{itemize}
+This one comparison (Theorem~\ref{thm:twochamber}) contains both the integer-translation walls and the residue-equality walls indexed by the ascent set $\Asc(\cb)$. It also removes the cancelling pairs that a two-step treatment produces (Remark~\ref{rem:pairs}).
+
+\begin{theoremA}[Finite straightening and locality; Theorems~\ref{thm:main}, \ref{thm:locality} and Proposition~\ref{prop:choices}]
+$\Hs_\s(\z;\tb)$ is an explicitly computable finite $\Q(\mu_q,\alpha_1,\dots,\alpha_r)$-linear combination of ordinary multiple polylogarithms of depth $\le r$ and weight $\le w$. Its depth-$r$ part is
+\[
+\Big(\prod_j z_j^{-k_j}\alpha_j^{c_j}\Big)\,q^{w-r}\sum_{\lb\bmod q}\omega^{\lb\cdot\cb}\Li_\s(\alpha_1\omega^{\ell_1},\dots,\alpha_r\omega^{\ell_r}).
+\]
+More generally, the top-depth part of any admissible affine-chain sum depends only on its summand. The output is independent of the choice of roots $\alpha_j$. Replacing $q$ by a multiple changes it only by distribution relations.
+\end{theoremA}
+
+\begin{theoremB}[Depth $r-1$; Theorem~\ref{thm:depthrm1}]
+The depth-$(r-1)$ component is an explicit finite sum. It has one term for each edge wall $(i,g)$, built from the merged two-pole letter on the edge $\{i,i+1\}$, and one term for each coordinate wall of $n_r$. In the canonical case $0\le t_j<1$ it reduces to $-\sum_{i\in\Asc(\cb)}$ (equality walls).
+\end{theoremB}
+
+\begin{theoremC}[Top weight; Theorem~\ref{thm:topweight}]
+Let $I^+=\{i: t_i-t_{i+1}\in\Z_{\ge1}\}$. The weight-$w$ component equals the sum over $B\subseteq I^+$ of Fourier layers of the contracted data. Equivalently, it is the lifted sum with ``$\ge$'' allowed on the edges in $I^+$, a stuffle-diagonal correction. Every other wall strictly lowers the weight.
+\end{theoremC}
+
+\begin{theoremD}[Regularization-free boundary; Theorem~\ref{thm:boundary}]
+Let $\xi\in\mu_N^r$ and $(s_1,\xi_1)\ne(1,1)$. Then $\Hs_\s(\xi;\tb)$ converges, and its straightening contains no divergent symbol $\Li_{1,\dots}(1,\dots)$. Hence $\Hs_\s(\xi;\tb)$ is a finite $\Q(\mu_{qN})$-linear combination of convergent level-$qN$ cyclotomic multiple polylogarithms.
+\end{theoremD}
+
+The cancellation behind Theorem~D is pole by pole. Lemma~\ref{lem:structure} shows that the dangerous Fourier mode of a simple-pole piece $(x-a)^{-1}$ has an $a$-independent coefficient vector. Since the simple-pole residues of a letter that is $O(x^{-2})$ sum to zero, the dangerous coefficients vanish. We also extend the result from $s_1\ge2$ to the conditionally convergent case $s_1=1$, $\xi_1\ne1$. In the excluded case, a depth-one computation (Proposition~\ref{prop:reg1}) identifies a $\log q$ correction to stuffle regularization.
+
+\subsection*{Organization}
+\begin{itemize}[leftmargin=1.5em]
+\item Section~\ref{sec:formal} fixes the formal framework.
+\item Section~\ref{sec:walls} proves the defect identities, the Fourier layer and the two-chamber identity.
+\item Section~\ref{sec:algorithm} defines the straightening algorithm on admissible affine chains and proves depth and weight control.
+\item Section~\ref{sec:theorems} proves Theorems A--C and a complexity bound.
+\item Section~\ref{sec:cyclo} treats the cyclotomic boundary.
+\item Section~\ref{sec:examples} contains examples, including the complete reduction of a depth-three sum.
+\item Section~\ref{sec:outlook} lists open problems, among them a motivic lift.
+\item Appendix~\ref{app:staircase} gives a staircase evaluation exhibiting depth collapse.
+\end{itemize}
+
+%=====================================================================
+\section{Formal framework}\label{sec:formal}
+%=====================================================================
+
+Throughout, $\N=\{1,2,\dots\}$, $\mu_N$ is the group of $N$th roots of unity, and $\one_P$ is the indicator of a condition $P$. For $\hb\in\N^d$ and $\yb\in(\C^\times)^d$ we use the strict convention
+\begin{equation}\label{eq:Li}
+\Li_\hb(\yb)=\sum_{n_1>\dots>n_d>0}\frac{y_1^{n_1}\cdots y_d^{n_d}}{n_1^{h_1}\cdots n_d^{h_d}} .
+\end{equation}
+
+\begin{definition}[Formal symbols]\label{def:formal}
+Let $K$ be a field with $\Q\subseteq K\subseteq\C$. Let $\fL_K$ be the $K$-vector space with basis the symbols
+\[
+[\varnothing]\qquad\text{and}\qquad [\hb;\yb]\quad (d\ge1,\ \hb\in\N^d,\ \yb\in(\C^\times)^d).
+\]
+The symbol $[\hb;\yb]$ has \emph{depth} $d$ and \emph{weight} $|\hb|$; the symbol $[\varnothing]$ has depth and weight $0$. Let $\fD_{\le d}$ and $W_{\le k}$ be the spans of symbols of depth $\le d$ and of weight $\le k$. Write $\gr^W_k$ for the weight-$k$ component of an element (its coefficients on weight-$k$ symbols), and $[X]_d$ for the image of $X\in\fD_{\le d}$ in $\fD_{\le d}/\fD_{\le d-1}$.
+
+The evaluation map $\ev$ is defined on the span of \emph{convergent} symbols by $[\varnothing]\mapsto1$ and $[\hb;\yb]\mapsto\Li_\hb(\yb)$. Convergent means $|y_k|<1$ for all $k$, or $|y_k|\le1$ with $(h_1,y_1)\ne(1,1)$ (Lemma~\ref{lem:conv}).
+\end{definition}
+
+It is convenient to build symbols multilinearly from \emph{formal letters} $\langle h\,|\,y\rangle$. If\[\Phi_k=\sum\nolimits_\iota\lambda_{k,\iota}\langle h_{k,\iota}|y_{k,\iota}\rangle,\]put
+\[
+\Li[\Phi_1\otimes\dots\otimes\Phi_d]=\sum_{\iota_1,\dots,\iota_d}\Big(\prod_k\lambda_{k,\iota_k}\Big)\,[\,(h_{1,\iota_1},\dots,h_{d,\iota_d});(y_{1,\iota_1},\dots,y_{d,\iota_d})\,].
+\]
+
+\begin{definition}[Distribution relations]\label{def:dist}
+For $m\ge1$, $\hb\in\N^d$ and $\yb$ with $|y_k|<1$ put
+\[
+\delta_m(\hb;\yb)=\sum_{\eta\in\mu_m^d}[\hb;\eta_1y_1,\dots,\eta_dy_d]-m^{d-|\hb|}\,[\hb;y_1^m,\dots,y_d^m].
+\]
+Let $\fD^{\rm dist}\subseteq\fL_K$ be their span. Because $\sum_{\eta\in\mu_m}\eta^n=m\one_{m\mid n}$, one has $\ev(\delta_m(\hb;\yb))=0$ (compare \cite{Gon98,Rac02}).
+\end{definition}
+
+\begin{definition}[Fourier symbol of a letter]\label{def:Phi}
+Let $R\in\Q(x)$ be a proper rational function with poles in $q^{-1}\Z$, and partial fractions
+\[
+R(x)=\sum_{p,h}C_{p,h}(x-p)^{-h}.
+\]
+For each pole write $p=c_p/q-\kappa_p$ with $0\le c_p<q$ and $\kappa_p\in\Z$. For a colour $w$ with a chosen root $\beta^q=w$, put
+\begin{equation}\label{eq:Phi}
+\Phi(R;w,\beta)=\sum_{p,h}C_{p,h}\,w^{-\kappa_p}\beta^{c_p}q^{h-1}\sum_{\ell=0}^{q-1}\omega^{\ell c_p}\,\langle h\,|\,\beta\omega^\ell\rangle .
+\end{equation}
+The \emph{total order} of $R$ is $\operatorname{ord}R=\deg(\text{denominator})=\sum_p\max\{h:C_{p,h}\ne0\}$.
+\end{definition}
+
+%=====================================================================
+\section{Walls and the Fourier layer}\label{sec:walls}
+%=====================================================================
+
+\subsection{One-dimensional defects}
+For integers $L,T$ define the signed finite set $\Gamma(L,T)$:
+\[
+\Gamma(L,T)=\begin{cases}\{L+1,\dots,T\}\ \text{with sign } +1,& L<T,\\ \varnothing,& L=T,\\ \{T+1,\dots,L\}\ \text{with sign } -1,& L>T.\end{cases}
+\]
+Write $\epsilon(a)$ for the sign attached to $a$, $\Gamma(T)=\Gamma(0,T)$, and note $|\Gamma(L,T)|=|L-T|$.
+
+\begin{lemma}[Defect identity]\label{lem:defect}
+For all integers $x,L,T$,
+\[
+\one_{x>L}=\one_{x>T}+\sum_{a\in\Gamma(L,T)}\epsilon(a)\one_{x=a}.
+\]
+\end{lemma}
+\begin{proof}
+If $L<T$, the left side exceeds $\one_{x>T}$ exactly on $\{L+1,\dots,T\}$. If $L>T$, it falls short exactly on $\{T+1,\dots,L\}$.
+\end{proof}
+
+This single lemma replaces the separate coordinate- and gap-defect lemmas of the first version. The sign convention $\epsilon$ is used throughout.
+
+\subsection{The Fourier layer}
+
+\begin{proposition}[Fourier layer]\label{prop:fourier}
+Let $p_k=c_k/q-\kappa_k$ ($0\le c_k<q$, $\kappa_k\in\Z$), $h_k\in\N$, and let $0<|w_k|<1$ with roots $\beta_k^q=w_k$. Then
+\[
+\sum_{x_1-p_1>\dots>x_d-p_d>0}\ \prod_{k=1}^d\frac{w_k^{x_k}}{(x_k-p_k)^{h_k}}
+=\Big(\prod_k w_k^{-\kappa_k}\beta_k^{c_k}\Big)q^{|\hb|-d}\sum_{\lb\bmod q}\omega^{\lb\cdot\cb}\Li_\hb(\beta_1\omega^{\ell_1},\dots,\beta_d\omega^{\ell_d}).
+\]
+The right side equals $\ev\Li[\Phi((x-p_1)^{-h_1};w_1,\beta_1)\otimes\dots\otimes\Phi((x-p_d)^{-h_d};w_d,\beta_d)]$. It is unchanged if some $\beta_k$ is replaced by $\beta_k\omega^{a}$.
+\end{proposition}
+
+\begin{proof}
+Put $u_k=q(x_k-p_k)=q(x_k+\kappa_k)-c_k$. The $u_k$ range over strictly decreasing positive integers with $u_k\equiv-c_k\pmod q$. Moreover $w_k^{x_k}=\beta_k^{qx_k}=\beta_k^{u_k}\beta_k^{c_k}w_k^{-\kappa_k}$ and $(x_k-p_k)^{-h_k}=q^{h_k}u_k^{-h_k}$. Insert the filter
+\[
+\one_{u\equiv-c\,(q)}=q^{-1}\sum_{\ell}\omega^{\ell(u+c)}
+\]
+in each coordinate. Replacing $\beta_k$ by $\beta_k\omega^a$ and reindexing $\ell_k\mapsto\ell_k+a$ leaves the expression unchanged.
+\end{proof}
+
+\subsection{Translation and residue walls (two-step form)}\label{sec:twostep}
+We record the two-step decomposition of the first version, since it explains the origin of the walls.
+
+Put $m_j=n_j+k_j$ and $D_i=k_i-k_{i+1}$. Then
+\[
+\Hs_\s(\z;\tb)=\prod_jz_j^{-k_j}\sum_{\substack{m_j>k_j\\ m_i-m_{i+1}>D_i}}\ \prod_j\frac{z_j^{m_j}}{(m_j-c_j/q)^{s_j}} .
+\]
+Applying Lemma~\ref{lem:defect} to every coordinate ($L=k_j$, $T=0$) and every gap ($L=D_i$, $T=0$) gives the \emph{translation-wall expansion}. It is the canonical sum $\Hs_\s(\z;\cb/q)$ plus finitely many strata with some coordinates or gaps frozen.
+
+\begin{proposition}[Translation walls]\label{prop:translation}
+The expansion just described is an exact identity. It has at most $\prod_j(1+|k_j|)\prod_i(1+|D_i|)$ strata. The proof uses only indicator identities, so the identity holds verbatim for any summand $f(m)$ that is finite on every stratum and absolutely summable on each of them, not only for the Hurwitz summand.
+\end{proposition}
+
+For the canonical sum, set $u_j=qm_j-c_j$. Then $u_i>u_{i+1}$ holds iff $m_i>m_{i+1}$, or $m_i=m_{i+1}$ and $c_i<c_{i+1}$. With
+\[
+\Asc(\cb)=\{i:c_i<c_{i+1}\},
+\]
+let $C_E(\cb)$ be the stratum with $m_i=m_{i+1}$ for $i\in E$ and strict inequalities elsewhere.
+
+\begin{proposition}[Canonical residue walls]\label{prop:residue}
+\[
+\Hs_\s(\z;\cb/q)=F_\cb-\sum_{\varnothing\ne E\subseteq\Asc(\cb)}C_E(\cb),
+\]
+where $F_\cb$ is the lifted sum, given explicitly by Proposition~\ref{prop:fourier}.
+\end{proposition}
+
+\subsection{The two-chamber identity}
+The two steps combine into a single comparison, which is the form used by the algorithm.
+
+\begin{theorem}[Two-chamber identity]\label{thm:twochamber}
+Let $t_j\notin\Z_{>0}$ and $\tau_i=t_i-t_{i+1}$. For $A\subseteq\{1,\dots,r\}$, $B\subseteq\{1,\dots,r-1\}$, anchors $a_j\in\Gamma(\lfl t_j\rfl)$ $(j\in A)$ and walls $g_i\in\Gamma(\lfl\tau_i\rfl)$ $(i\in B)$, let $W_{A,B}(a,g)$ be the sum of the summand of \eqref{eq:H} over those $n\in\Z^r$ with
+\[
+n_j=a_j\ (j\in A),\quad n_j>t_j\ (j\notin A),\quad n_i-n_{i+1}=g_i\ (i\in B),\quad n_i-n_{i+1}>\tau_i\ (i\notin B).
+\]
+Then
+\begin{multline}\label{eq:twochamber}
+\Hs_\s(\z;\tb)=\sum_{n\in\Lambda(\tb)}\prod_j\frac{z_j^{n_j}}{(n_j-t_j)^{s_j}}\\
++\sum_{(A,B)\ne(\varnothing,\varnothing)}\sum_{a,g}\Big(\prod_{j\in A}\epsilon(a_j)\prod_{i\in B}\epsilon(g_i)\Big)W_{A,B}(a,g).
+\end{multline}
+The first term equals $\prod_jz_j^{-k_j}F_\cb$, the tensor Fourier transform of Proposition~\ref{prop:fourier}, taken with $p_k=t_k$, $h_k=s_k$, $w_k=z_k$ and $\beta_k=\alpha_k$. No denominator vanishes on any stratum. The number of strata is at most
+\begin{equation}\label{eq:count}
+\prod_{j=1}^r\big(1+|\lfl t_j\rfl|\big)\prod_{i=1}^{r-1}\big(1+|\lfl t_i-t_{i+1}\rfl|\big).
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+On integers, $n_j>t_j\iff n_j>\lfl t_j\rfl$ and $n_i-n_{i+1}>\tau_i\iff n_i-n_{i+1}>\lfl\tau_i\rfl$. The chamber $n_1>\dots>n_r>0$ is cut out by
+\[
+\prod_j\one_{n_j>0}\prod_i\one_{n_i-n_{i+1}>0}
+\]
+(the coordinate conditions for $j<r$ are redundant). Apply Lemma~\ref{lem:defect} with $T=\lfl t_j\rfl$ and $T=\lfl\tau_i\rfl$, and expand the product. The empty choice is the indicator of $\Lambda(\tb)$, because its coordinate conditions are implied by the lifted chain.
+
+No pole is hit. Indeed, on every stratum each $n_j$ either satisfies $n_j>t_j$, or equals some $a\in\Gamma(\lfl t_j\rfl)$. If $t_j\in\Z$ then $t_j\le0$ and $\Gamma(t_j)=\{t_j+1,\dots,0\}\not\ni t_j$. The count follows from $|\Gamma(T)|=|T|$.
+\end{proof}
+
+\begin{remark}[Recovering the ascent set, and cancelling pairs]\label{rem:pairs}
+In the canonical case $0\le t_j<1$ we have $\lfl t_j\rfl=0$, and
+\[
+\lfl\tau_i\rfl=\begin{cases}-1,& i\in\Asc(\cb),\\ 0,& i\notin\Asc(\cb).\end{cases}
+\]
+So the only walls are the equality walls $n_i=n_{i+1}$, $i\in\Asc(\cb)$, with sign $-1$; this is Proposition~\ref{prop:residue}. In general, composing Propositions~\ref{prop:translation} and \ref{prop:residue} produces the same walls, together with pairs that cancel. For instance, when $D_i<0$ and $i\in\Asc(\cb)$, the gap wall $m_i=m_{i+1}$ (sign $+$) and the equality wall $E=\{i\}$ (sign $-$) are the same stratum. Theorem~\ref{thm:twochamber} is free of such pairs, and its count \eqref{eq:count} improves the count $\prod(1+|k_j|)\prod(1+|D_i|)$ of the two-step form.
+\end{remark}
+
+%=====================================================================
+\section{Admissible affine chains and the straightening algorithm}\label{sec:algorithm}
+%=====================================================================
+
+\begin{definition}[Admissible affine chain]\label{def:chain}
+An \emph{affine chain} of depth $d$ consists of the following data:
+\begin{itemize}[leftmargin=1.5em]
+\item consecutive nonempty intervals $C_1<\dots<C_d$ of $\{1,\dots,r\}$ (the \emph{blocks});
+\item for each block, the colour $w_k=\prod_{j\in C_k}z_j$ and the root $\beta_k=\prod_{j\in C_k}\alpha_j$;
+\item proper rational functions $R_k\in\Q(x)$ (the \emph{letters}) with poles in $q^{-1}\Z$;
+\item integers $L_k$ and $D_k$, and a coefficient $\gamma\in K$.
+\end{itemize}
+Its value is
+\[
+A=\gamma\sum_{\substack{x_k>L_k\\ x_k-x_{k+1}>D_k}}\ \prod_{k=1}^dw_k^{x_k}R_k(x_k).
+\]
+The chain is \emph{admissible} if
+\begin{equation}\tag{P}
+\text{no pole of $R_k$ is an integer $>L_k$}\qquad(1\le k\le d).
+\end{equation}
+Under (P) the summand is finite on the chamber, and for $|w_k|<1$ the series converges absolutely. The sum \eqref{eq:H} is the admissible chain with blocks $\{j\}$, letters $(x-t_j)^{-s_j}$, $L_j=0$ and $D_i=0$. For it, (P) is exactly the hypothesis $t_j\notin\Z_{>0}$.
+\end{definition}
+
+The hypothesis (P) is coordinatewise. It is stronger than ``no pole on the actual summation lattice'', and it is the condition that survives the expansions below. This corrects the hypothesis of the affine-chain closure lemma in the first version.
+
+\begin{definition}[The algorithm $\cS$]\label{def:alg}
+For an admissible chain $A$ of depth $d$, define $\cS(A)\in\fL_K$ recursively.
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item If $d=0$, set $\cS(A)=\gamma\,[\varnothing]$.
+\item Expand every letter into partial fractions. For each choice of pieces $(p_k,h_k)$ with coefficients $C_{p_k,h_k}$, consider the \emph{single-pole chain}: the same chamber, with letters $(x-p_k)^{-h_k}$ and coefficient $\gamma\prod_kC_{p_k,h_k}$.
+\item For a single-pole chain, put $\tilde L_k=\lfl p_k\rfl$ and $\tilde D_k=\lfl p_k-p_{k+1}\rfl$. These define its lifted chamber $x_1-p_1>\dots>x_d-p_d>0$. Expand
+\[
+\prod_k\one_{x_k>L_k}\prod_k\one_{x_k-x_{k+1}>D_k}
+\]
+by Lemma~\ref{lem:defect} with $(L,T)=(L_k,\tilde L_k)$ and $(D_k,\tilde D_k)$.
+\item The \emph{base term} (no anchor, no wall) contributes the Fourier layer, i.e.\ the coefficient times
+\[
+\Li\big[\textstyle\bigotimes_k\Phi((x-p_k)^{-h_k};w_k,\beta_k)\big].
+\]
+\item Every other stratum is processed as follows. Contract the walled edges. Parametrize each component by its \emph{minimal} coordinate, $x_\ell=X+\lambda_\ell$ with $\lambda_\ell\ge0$. Multiply the component's letters, colours and roots, and move the prefactor $\prod w_\ell^{\lambda_\ell}$ into the coefficient. A component is \emph{anchored} if it contains an anchor (incompatible anchors give $0$).
+\item Let $C_*$ be the leftmost anchored component. Components to the right of $C_*$ take finitely many values (Lemma~\ref{lem:anchor}). Sum them out, together with the value at $C_*$, into the coefficient. The components to the left of $C_*$ (all of them, if there is no anchor) form an affine chain $A'$ of smaller depth. Its lower bounds and gaps are inherited from the lifted inequalities, and the edge into $C_*$ gives an extra lower bound. Add $\pm\cS(A')$.
+\end{enumerate}
+\end{definition}
+
+\begin{lemma}[Dimension of a stratum]\label{lem:dim}
+A compatible stratum with walled edges $B$ and anchor set $A$ has $d-|B|-a(B,A)$ free variables. Here $a(B,A)$ is the number of contracted components meeting $A$. In particular every non-base stratum has fewer than $d$ free variables.
+\end{lemma}
+\begin{proof}
+Contracting $|B|$ edges of a path leaves $d-|B|$ components. An anchor fixes its component, and further anchors in the same component impose only compatibility conditions. If $A\cup B\ne\varnothing$, at least one edge is contracted or one component is anchored.
+\end{proof}
+
+\begin{lemma}[Anchor decomposition]\label{lem:anchor}
+In a stratum with at least one anchored component, let $C_*$ be the leftmost one. Every component to the right of $C_*$ takes finitely many values. The unbounded variables form the consecutive chain of components to the left of $C_*$, and this chain contains the first variable.
+\end{lemma}
+\begin{proof}
+Every non-anchored coordinate satisfies a lifted lower bound $x_\ell>\tilde L_\ell$. Every non-walled edge gives $x_\ell-x_{\ell+1}>\tilde D_\ell$, which bounds the right neighbour from above once the left one is fixed. Starting from the fixed value at $C_*$, induction to the right gives finite ranges. Components left of $C_*$ are bounded only from below, and the path starts at variable $1$.
+\end{proof}
+
+\begin{lemma}[Weight under partial fractions]\label{lem:weight}
+Let $R(x)=\prod_{\ell\in C}(x-\pi_\ell)^{-h_\ell}$ have $\nu$ distinct poles. Every partial-fraction exponent is at most $\sum_\ell h_\ell-(\nu-1)$. In particular merging never increases the weight, and merging two distinct poles lowers it by at least one.
+\end{lemma}
+\begin{proof}
+Collect coincident poles, $R=\prod_{\pi}(x-\pi)^{-M_\pi}$ with $\sum M_\pi=\sum h_\ell$. The exponents at $\pi$ are at most $M_\pi$, and $M_\pi\le\sum_\ell h_\ell-(\nu-1)$ since every other pole has $M\ge1$.
+\end{proof}
+
+\begin{lemma}[Closure]\label{lem:closure}
+The algorithm is well defined and terminates. All chains produced are admissible, no denominator vanishes at any evaluated lattice point, and for $|z_j|<1$ one has $\ev\cS(A)=A$. Further:
+\begin{itemize}[leftmargin=1.5em]
+\item $\cS(A)\in\fD_{\le d}\cap W_{\le\sum_k\operatorname{ord}R_k}$;
+\item every non-zero-depth symbol has arguments $\beta_C\omega^\ell$, where $C$ is an interval and $\beta_C=\prod_{j\in C}\alpha_j$; in particular $|\beta_C\omega^\ell|<1$;
+\item all coefficients lie in $K=\Q(\mu_q,\alpha_1,\dots,\alpha_r)$.
+\end{itemize}
+\end{lemma}
+
+\begin{proof}
+Termination follows from Lemma~\ref{lem:dim}, since every recursive call has smaller depth.
+
+\emph{No pole is hit.} In a single-pole chain, a stratum point has each coordinate either lifted, so $x_k>\tilde L_k$ and hence $x_k>p_k$, or anchored at $a\in\Gamma(L_k,\tilde L_k)$. If $p_k\in\Z$, (P) gives $p_k\le L_k$, so $\tilde L_k=p_k$ and $\Gamma=\{p_k+1,\dots,L_k\}\not\ni p_k$.
+
+\emph{Admissibility is preserved.} A free component consists only of lifted coordinates. Its letter $\prod(X+\lambda_\ell-p_\ell)^{-h_\ell}$ has poles $p_\ell-\lambda_\ell$, and its lower bound is at least $\max_\ell(\tilde L_\ell-\lambda_\ell)$. If $p_\ell-\lambda_\ell\in\Z$, then $p_\ell\in\Z$, so $\tilde L_\ell=p_\ell$ and the pole does not exceed the bound. Extra lower bounds coming from an anchor only increase $L$.
+
+\emph{Evaluation.} The expansion in step (3) is an identity of indicators, each stratum is absolutely summable, and the base term is evaluated by Proposition~\ref{prop:fourier}; this gives $\ev\cS(A)=A$.
+
+\emph{Depth, weight, arguments, coefficients.} Depth decreases at every recursive call. Weight does not increase, by Lemma~\ref{lem:weight}, and anchoring discards whole letters. Blocks are unions of consecutive blocks, hence intervals, and the root of a merged block is the product of the roots. All coefficients are products of rationals, powers of $z_j$ and $\alpha_j$, and powers of $\omega$.
+\end{proof}
+
+%=====================================================================
+\section{The straightening theorems}\label{sec:theorems}
+%=====================================================================
+
+\begin{theorem}[Finite straightening]\label{thm:main}
+Let $0<|z_j|<1$, $s_j\in\N$ and $t_j\in\Q\setminus\Z_{>0}$. Then $\cS(\Hs_\s(\z;\tb))$ is a finite $K$-linear combination of symbols of depth $\le r$ and weight $\le w$, whose arguments are $\beta_C\omega^\ell$ for intervals $C$, and its evaluation is $\Hs_\s(\z;\tb)$. Its depth-$r$ part is
+\begin{equation}\label{eq:top}
+\Big(\prod_jz_j^{-k_j}\alpha_j^{c_j}\Big)q^{w-r}\sum_{\lb\bmod q}\omega^{\lb\cdot\cb}\,[\s;\alpha_1\omega^{\ell_1},\dots,\alpha_r\omega^{\ell_r}].
+\end{equation}
+\end{theorem}
+\begin{proof}
+Apply Lemma~\ref{lem:closure} to the chain of Definition~\ref{def:chain}. Its single-pole chain is the chain itself, and step (3) is Theorem~\ref{thm:twochamber}. The base term is \eqref{eq:top}, and every other stratum has depth $<r$ by Lemma~\ref{lem:dim}.
+\end{proof}
+
+\begin{theorem}[Locality of the top-depth part]\label{thm:locality}
+For every admissible chain of depth $d$,
+\[
+[\cS(A)]_d=\gamma\,\Li\Big[\bigotimes_{k=1}^d\Phi(R_k;w_k,\beta_k)\Big].
+\]
+In particular $[\cS(A)]_d$ does not depend on the lower bounds $L_k$ or the gaps $D_k$.
+\end{theorem}
+\begin{proof}
+Only base terms have depth $d$. The base term of the piece $(p_k,h_k)_k$ is\[\gamma\prod\nolimits_k C_{p_k,h_k}\,\Li\big[\textstyle\bigotimes_k\Phi((x-p_k)^{-h_k})\big].\] Summing over pieces and using the linearity of $\Phi$ in the letter gives the claim.
+\end{proof}
+
+\begin{corollary}[Translation invariance at top depth]\label{cor:transl}
+$[\cS(\Hs_\s(\z;\tb))]_r=\prod_jz_j^{-k_j}\,[\cS(\Hs_\s(\z;\cb/q))]_r$.
+\end{corollary}
+\begin{proof}
+$\Phi((x-c/q+k)^{-s};z,\alpha)=z^{-k}\Phi((x-c/q)^{-s};z,\alpha)$.
+\end{proof}
+
+Corollary~\ref{cor:transl} is immediate once Theorem~\ref{thm:locality} is available. The first non-trivial effect of translation appears in depth $r-1$, which Theorem~\ref{thm:depthrm1} computes.
+
+\begin{proposition}[Independence of choices]\label{prop:choices}
+Let $A$ be an admissible chain.
+\begin{enumerate}[label=(\roman*),leftmargin=2em]
+\item $\cS(A)\in\fL_K$, viewed as a combination of symbols indexed by their argument values, is independent of the choice of the roots $\alpha_j$.
+\item Let $\cS_q$ and $\cS_{mq}$ denote the outputs computed with denominators $q$ and $mq$, where the roots $\alpha'_j$ for $mq$ satisfy $\alpha_j'^{\,m}=\alpha_j$. Then $\cS_{mq}(A)-\cS_q(A)\in\fD^{\rm dist}$.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+The strata, merged letters and partial fractions are determined by the poles and the integers $L_k,D_k$ alone. They do not depend on $q$ or on the roots. Only the Fourier layers do, so it suffices to treat one Fourier layer.
+
+(i) This is the reindexing in Proposition~\ref{prop:fourier}.
+
+(ii) With denominator $mq$, $p=mc/(mq)-\kappa$, so the data become $c'=mc$ and $\kappa'=\kappa$, and $\beta'^{\,c'}=\beta^{c}$. Write $\ell=\ell_0+qj$ with $0\le\ell_0<q$ and $0\le j<m$, and put $\omega'=e^{2\pi i/mq}$. Then $\omega'^{\ell c'}=\omega^{\ell_0c}$, and $\omega'^{qj}$ runs over $\mu_m$. The layer computed with $mq$ is therefore
+\[
+\Big(\prod w_k^{-\kappa_k}\beta_k^{c_k}\Big)(mq)^{|\hb|-d}\sum_{\lb_0}\omega^{\lb_0\cdot\cb}\sum_{\eta\in\mu_m^d}[\hb;\eta\beta'\omega'^{\lb_0}].
+\]
+Modulo $\delta_m(\hb;\beta'\omega'^{\lb_0})$, the inner sum equals $m^{d-|\hb|}[\hb;\beta\omega^{\lb_0}]$, because $(\beta'\omega'^{\ell_0})^m=\beta\omega^{\ell_0}$. This is the layer computed with $q$.
+\end{proof}
+
+Thus, after fixing a common denominator, $\cS$ is a well-defined formal object. The classes $[\,\cdot\,]_d$ are taken of $\cS(\cdot)$, not of numbers, which addresses the formal meaning of the associated-graded statements.
+
+\subsection{The depth \texorpdfstring{$r-1$}{r-1} component}
+Write $\Phi_j=\Phi((x-t_j)^{-s_j};z_j,\alpha_j)$. For an edge $i$ and $g\in\Z$ put $g^+=\max(g,0)$ and $g^-=\max(-g,0)$, and define the merged letter
+\[
+M_{i,g}(x)=(x+g^+-t_i)^{-s_i}\,(x+g^--t_{i+1})^{-s_{i+1}} .
+\]
+
+\begin{theorem}[Depth $r-1$]\label{thm:depthrm1}
+For $r\ge2$,
+\begin{multline*}
+[\cS(\Hs_\s(\z;\tb))]_{r-1}=\sum_{i=1}^{r-1}\ \sum_{g\in\Gamma(\lfl t_i-t_{i+1}\rfl)}\epsilon(g)\,z_i^{g^+}z_{i+1}^{g^-}\\
+\times\Li\big[\Phi_1\otimes\dots\otimes\Phi_{i-1}\otimes\Phi(M_{i,g};z_iz_{i+1},\alpha_i\alpha_{i+1})\otimes\Phi_{i+2}\otimes\dots\otimes\Phi_r\big]\\
++\sum_{a\in\Gamma(\lfl t_r\rfl)}\epsilon(a)\,\frac{z_r^{a}}{(a-t_r)^{s_r}}\,\Li\big[\Phi_1\otimes\dots\otimes\Phi_{r-1}\big].
+\end{multline*}
+In the canonical case $0\le t_j<1$ this reduces to
+\[
+-\sum_{i\in\Asc(\cb)}\Li[\dots\otimes\Phi(M_{i,0};z_iz_{i+1},\alpha_i\alpha_{i+1})\otimes\dots].
+\]
+\end{theorem}
+\begin{proof}
+By Lemmas~\ref{lem:dim} and \ref{lem:anchor}, a stratum of the two-chamber expansion contributes in depth $r-1$ only in two cases.
+\begin{itemize}[leftmargin=1.5em]
+\item \emph{Exactly one wall $(i,g)$ and no anchor.} The left chain then consists of all $r-1$ components.
+\item \emph{Exactly one anchor, at $n_r$, and no wall.} Here the left chain is $n_1,\dots,n_{r-1}$, and the right part is the single value $z_r^a(a-t_r)^{-s_r}$.
+\end{itemize}
+An anchor at $j<r$ leaves a left chain of depth $j-1\le r-2$. Two or more walls or anchors leave at most $r-2$ free variables.
+
+In the first case, parametrize the merged component by its minimal coordinate. This is $n_{i+1}$ if $g\ge0$, giving the prefactor $z_i^{g}$, and $n_i$ if $g<0$, giving the prefactor $z_{i+1}^{-g}$. Its letter is $M_{i,g}$. Apply Theorem~\ref{thm:locality} to each left chain. The canonical case follows from Remark~\ref{rem:pairs}.
+\end{proof}
+
+\subsection{The top-weight component}
+Let $I^+=\{i:\tau_i=t_i-t_{i+1}\in\Z_{\ge1}\}$. For $B\subseteq I^+$, contract the edges of $B$. A block $b=\{i,\dots,j\}$ gets
+\[
+\text{letter }(x-t_j)^{-s_b},\quad s_b=\sum_{\ell\in b}s_\ell,\qquad \text{colour } z_b=\prod_{\ell\in b}z_\ell,\qquad \text{root }\alpha_b=\prod_{\ell\in b}\alpha_\ell,
+\]
+and prefactor $\pi_b=\prod_{\ell\in b}z_\ell^{t_\ell-t_j}$.
+
+\begin{theorem}[Top weight]\label{thm:topweight}
+\[
+\gr^W_w\,\cS(\Hs_\s(\z;\tb))=\sum_{B\subseteq I^+}\Big(\prod_b\pi_b\Big)\Li\Big[\bigotimes_b\Phi\big((x-t_{j_b})^{-s_b};z_b,\alpha_b\big)\Big].
+\]
+Equivalently, up to terms of weight $<w$, $\Hs_\s(\z;\tb)$ equals the sum of its summand over the chain $n_1-t_1\succ n_2-t_2\succ\dots\succ n_r-t_r>0$. Here $\succ$ means $\ge$ on the edges of $I^+$ and $>$ on the others.
+\end{theorem}
+
+\begin{proof}
+Consider the strata of Theorem~\ref{thm:twochamber}.
+
+\emph{Strata that lower the weight.} A stratum with an anchor at $j$ discards the letter of weight $s_j\ge1$, by Lemma~\ref{lem:anchor}. A wall $(i,g)$ merges poles $t_i-g^+$ and $t_{i+1}-g^-$ (up to the common shift). These coincide iff $g=\tau_i$. Since $g\in\Gamma(\lfl\tau_i\rfl)$, this forces $\tau_i\in\Z_{\ge1}$, so $i\in I^+$ and the sign is $+1$. For $\tau_i\in\Z_{\le0}$ the set $\Gamma(\tau_i)=\{\tau_i+1,\dots,0\}$ omits $\tau_i$. Otherwise Lemma~\ref{lem:weight} lowers the weight, and the recursion never raises it again.
+
+\emph{Strata that keep the weight.} These are exactly: no anchors, and walls $g_i=\tau_i$ for $i\in B\subseteq I^+$. All $g_i\ge1$, so the minimal coordinate of a block is its last one. The offsets are $\lambda_\ell=t_\ell-t_j$, and the letter is $(x-t_j)^{-s_b}$. The inherited lower bound is
+\[
+\max_\ell\big(\lfl t_\ell\rfl-\lambda_\ell\big)=\lfl t_j\rfl,
+\]
+and the inherited gap between consecutive blocks $b,b'$ is $\lfl t_{j_b}-t_{j_{b'}}\rfl$. So the contracted chain is already in its own lifted chamber, all of its defect sets are empty, and $\cS$ returns exactly its Fourier layer.
+\end{proof}
+
+\begin{remark}
+In the canonical case $I^+=\varnothing$, and the top-weight part is the Fourier layer alone. This is the weight drop of the canonical walls. For integer shifts $t_j=1-j$ one has $I^+=\{1,\dots,r-1\}$, and the top-weight part is the full star sum (Appendix~\ref{app:staircase}).
+\end{remark}
+
+\subsection{Size of the output}
+
+\begin{proposition}[Complexity]\label{prop:complexity}
+The first layer of the algorithm has at most \eqref{eq:count} strata. The output $\cS(\Hs_\s(\z;\tb))$ is supported on at most
+\[
+\sum_{d=0}^{r}\binom{w}{d}\Big(\frac{q\,r(r+1)}{2}\Big)^d
+\]
+symbols. This count is independent of the heights $|k_j|$.
+\end{proposition}
+\begin{proof}
+A symbol of depth $d\ge1$ is determined by a composition $\hb$ of weight $\le w$ into $d$ parts, and there are $\sum_{k=d}^{w}\binom{k-1}{d-1}=\binom{w}{d}$ of these. It is further determined by $d$ arguments $\beta_C\omega^\ell$, each given by an interval $C$ (there are $r(r+1)/2$) and a residue $\ell$ (there are $q$).
+\end{proof}
+
+The running time does depend on the heights, through \eqref{eq:count} at each level of the recursion.
+
+\subsection{The colour--residue transform}
+For fixed $\s$ and root lifts, let $D_\alpha$ be the diagonal matrix on residue vectors $\cb\in\{0,\dots,q-1\}^r$ with entries $\prod_j\alpha_j^{c_j}$, and let $F_q=(\omega^{c\ell})_{0\le c,\ell<q}$. By Proposition~\ref{prop:fourier}, the vector $(F_\cb)_\cb$ is the image of the vector of colour coordinates $(\Li_\s(\alpha\omega^{\lb}))_{\lb}$ under the \emph{colour-to-residue transform} $q^{w-r}D_\alpha F_q^{\otimes r}$. Since $F_q\overline{F_q}^{\,T}=qI_q$, its inverse is $q^{-w}\,\overline{F_q}^{\,\otimes r}D_\alpha^{-1}$.
+
+%=====================================================================
+\section{Cyclotomic specialization}\label{sec:cyclo}
+%=====================================================================
+
+Fix $\xi\in\mu_N^r$ and boundary roots $\alpha_j^\partial\in\mu_{qN}$ with $(\alpha_j^\partial)^q=\xi_j$. For $0<\rho\le1$ put $z_j(\rho)=\rho^q\xi_j$ and $\alpha_j(\rho)=\rho\,\alpha_j^\partial$.
+
+The strata, merged letters and partial fractions of the algorithm depend only on $(\s,\tb)$. So $\cS_\rho:=\cS(\Hs_\s(\z(\rho);\tb))$ is a finite list of terms
+\[
+\cS_\rho=\sum_{\theta\in\Theta}\kappa_\theta\,\rho^{e_\theta}\,\big[\hb_\theta;\ \rho^{\nu_{\theta,1}}y_{\theta,1},\dots,\rho^{\nu_{\theta,d}}y_{\theta,d}\big],
+\]
+indexed by a set $\Theta$ independent of $\rho$. Here $\kappa_\theta\in\Q(\mu_{qN})$, $e_\theta\in\Z$, $|y_{\theta,k}|=1$, and $\nu_{\theta,k}=|C_{\theta,k}|$ is the size of the $k$th block. Define $\cS^\partial\in\fL_{\Q(\mu_{qN})}$ as the specialization at $\rho=1$, with like symbols collected. A boundary symbol $[\hb;\yb]$ is \emph{dangerous} if $(h_1,y_1)=(1,1)$.
+
+\begin{lemma}[Convergence; standard]\label{lem:conv}
+For roots of unity $\eta_k$, the strict series $\Li_\hb(\eta)$ converges iff $(h_1,\eta_1)\ne(1,1)$, and absolutely if $h_1\ge2$ (see e.g.\ \cite{Zha16,Gon98,Rac02}).
+\end{lemma}
+
+\begin{lemma}[Uniform radial control]\label{lem:radial}
+Let $|y_k|=1$ and $\nu_k\in\N$.
+\begin{enumerate}[label=(\alph*),leftmargin=2em]
+\item If $(h_1,y_1)\ne(1,1)$, then $\Li_\hb(\rho^{\nu_1}y_1,\dots,\rho^{\nu_d}y_d)\to\Li_\hb(\yb)$ as $\rho\to1^-$.
+\item For $0<x<1$ and $|u_k|\le1$, $|\Li_{1,h_2,\dots,h_d}(x,u_2,\dots,u_d)|\ll_d(1+|\log(1-x)|)^d$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) If $h_1\ge2$, the series is dominated by the convergent Euler--Zagier series $\zeta(\hb)$, and dominated convergence applies.
+
+Let $h_1=1$ and $y_1\ne1$. Put $\delta=\min_{0\le\sigma\le1}|1-\sigma y_1|>0$ and $v=\rho^{\nu_1}y_1$. Then every partial sum satisfies $|\sum_{m=A}^{B}v^m|\le2/\delta$, uniformly in $\rho\in(0,1]$. Since $1/m$ is decreasing, Abel's inequality gives
+\[
+\Big|A_\rho(n)\Big|\le\frac{2}{\delta n},\qquad A_\rho(n)=\sum_{m>n}\frac{v^m}{m},
+\]
+uniformly in $\rho$. Also $A_\rho(n)\to A_1(n)$, by Abel's theorem. If $d=1$ we are done. Otherwise write the series as
+\[
+\sum_{n_2>\dots}A_\rho(n_2)\prod_{k\ge2}(\rho^{\nu_k}y_k)^{n_k}n_k^{-h_k}.
+\]
+It is dominated by $(2/\delta)\sum n_2^{-h_2-1}n_3^{-h_3}\cdots$, which converges, and dominated convergence applies.
+
+(b) The inner sum with $n_1=n$ is at most $H_n^{d-1}\le(1+\log n)^{d-1}$. Put $M=\lceil(1-x)^{-1}\rceil$. Then
+\[
+\sum_{n\le M}\frac{(1+\log n)^{d-1}}{n}\le(1+\log M)^d,
+\qquad
+\sum_{n>M}e^{-n/M}\frac{(1+\log n)^{d-1}}{n}\ll_d(1+\log M)^{d-1}. \qedhere
+\]
+\end{proof}
+
+The heart of the matter is the following structure lemma for simple-pole pieces. It replaces the ``reordering'' device of the first version, which left uniformity across poles unjustified.
+
+\begin{lemma}[Structure of a leading pole piece]\label{lem:structure}
+Let $P\subset q^{-1}\Z$ be finite and $h\ge1$. Let $(A_a)_{a\in P}$ be admissible chains of depth $d$ with:
+\begin{itemize}[leftmargin=1.5em]
+\item identical blocks, colours, roots, letters $R_2,\dots,R_d$, bounds $L_2,\dots,L_d$ and gaps $D_2,\dots,D_{d-1}$;
+\item first letter $(x-a)^{-h}$;
+\item arbitrary $L_1(a)$ and $D_1(a)$ (subject to (P)).
+\end{itemize}
+Write $a=c_a/q-\kappa_a$. Then there are elements $\mathcal U_\ell\in\fL$ $(\ell\bmod q)$, \emph{independent of $a$}, all of whose symbols have first entry $(h,\beta_1\omega^\ell)$, such that
+\[
+\cS(A_a)=\sum_{\ell\bmod q}(\beta_1\omega^\ell)^{c_a}\,w_1^{-\kappa_a}\,\mathcal U_\ell+\mathcal V_a .
+\]
+Here $\mathcal V_a$ is a combination of $[\varnothing]$ and of outputs $\cS(A')$ of admissible chains of depth $<d$ whose first letter has total order $\ge h+1$.
+\end{lemma}
+
+\begin{proof}
+We argue by induction on $d$. For $d=1$, the defect set of the coordinate gives finitely many constants, and the base term is
+\[
+(\beta_1\omega^\ell)^{c_a}w_1^{-\kappa_a}q^{h-1}[h;\beta_1\omega^\ell]
+\]
+summed over $\ell$. Now let $d\ge2$, and fix pieces $(\pi_k,h_k)$ of $R_2,\dots,R_d$. Classify the strata of step (3) by what happens at variable $1$.
+\begin{itemize}[leftmargin=1.5em]
+\item \emph{An anchor on $x_1$.} By Lemma~\ref{lem:anchor} the whole stratum is finite, and it contributes to $[\varnothing]$.
+\item \emph{A wall on edge $1$.} Variable $1$ merges with its neighbour. The merged letter contains $(x+\lambda_1-a)^{-h}$ and at least one further factor, so its total order is $\ge h+1$; this goes into $\mathcal V_a$.
+\item \emph{Variable $1$ is lifted and unmerged.} The remaining choices concern positions $\ge2$, and they are independent of $a$. The lifted thresholds $\tilde L_k$ and $\tilde D_k$ for $k\ge2$ do not involve $a$, and neither does the enumeration to the right of the first anchored component, since it only involves constraints among positions $\ge2$.
+\end{itemize}
+In the last case:
+\begin{itemize}[leftmargin=1.5em]
+\item If the stratum is the base term, its Fourier layer factors as
+\[
+\sum_\ell(\beta_1\omega^\ell)^{c_a}w_1^{-\kappa_a}q^{h-1}\langle h|\beta_1\omega^\ell\rangle\otimes(\text{an $a$-independent element}).
+\]
+\item Otherwise the left chain is again a family of the type in the lemma, of smaller depth: its first letter is $(x-a)^{-h}$, its first bound and gap depend on $a$, and the remaining data and the outer coefficient do not. The induction hypothesis applies.
+\end{itemize}
+Collecting terms proves the lemma.
+\end{proof}
+
+\begin{proposition}[Balanced leading letters]\label{prop:balanced}
+Let $A$ be an admissible chain in the $\rho$-family whose first letter $R_1$ has total order $\ge2$, and let $\nu=|C_1|$. The terms of $\cS_\rho(A)$ whose boundary symbol is dangerous can be grouped as $\sum_gB_g(\rho)\,\mathcal W_g(\rho)$, where:
+\begin{itemize}[leftmargin=1.5em]
+\item $B_g(\rho)=\sum_{a}C_{a,g}\,\rho^{\nu qa}$ with $\sum_aC_{a,g}=0$;
+\item each $\mathcal W_g(\rho)$ is a finite combination of symbols $[1,\hb';\rho^{\nu},\yb'(\rho)]$ with coefficients bounded near $\rho=1$ and $|y'_k(\rho)|\le1$.
+\end{itemize}
+In particular the dangerous coefficients of $\cS^\partial(A)$ vanish.
+\end{proposition}
+
+\begin{proof}
+We argue by induction on the depth. Write $R_1=\sum_{a,h}C_{a,h}(x-a)^{-h}$. Since $R_1=O(x^{-2})$, the coefficient of $x^{-1}$ at infinity vanishes, i.e.\ $\sum_aC_{a,1}=0$. Fix the pieces of $R_2,\dots,R_d$. For each $h$, the chains with first letter $(x-a)^{-h}$ form a family as in Lemma~\ref{lem:structure}, since $L_1$ and $D_1$ are common to all pieces.
+
+\emph{The $\mathcal U$ terms.} For $h\ge2$ they are never dangerous. For $h=1$, a term of $\mathcal U_\ell$ is dangerous iff $\beta_1^\partial\omega^\ell=1$. This forces $w_1^\partial=(\beta_1^\partial\omega^\ell)^q=1$, and then
+\[
+(\beta_1\omega^\ell)^{c_a}w_1^{-\kappa_a}=\rho^{\nu c_a}\rho^{-q\nu\kappa_a}=\rho^{\nu qa}.
+\]
+Summing over $a$ with weights $C_{a,1}$ gives $B(\rho)=\sum_aC_{a,1}\rho^{\nu qa}$, multiplying the $a$-independent $\mathcal U_\ell(\rho)$.
+
+\emph{The $\mathcal V_a$ terms.} These are constants or outputs of chains of smaller depth whose first letter has total order $\ge2$. The induction hypothesis applies to them.
+\end{proof}
+
+\begin{lemma}[Radial limit of the Hurwitz sum]\label{lem:Hlimit}
+If $(s_1,\xi_1)\ne(1,1)$, then $\Hs_\s(\xi;\tb)$ converges, and $\Hs_\s(\z(\rho);\tb)\to\Hs_\s(\xi;\tb)$ as $\rho\to1^-$.
+\end{lemma}
+
+\begin{proof}
+If $s_1\ge2$, the series converges absolutely and dominated convergence applies.
+
+Let $s_1=1$ and $\xi_1\ne1$. Write
+\[
+\Hs(\rho)=\sum_ny^nb_n(\rho),\qquad y=\rho^q\xi_1,\qquad b_n=(n-t_1)^{-1}T_n(\rho),
+\]
+where $T_n$ is the depth-$(r-1)$ tail over $n>n_2>\cdots$. Uniformly in $\rho$ we have $|T_n|\ll(1+\log n)^{r-1}$ and $|T_{n+1}-T_n|\ll(1+\log n)^{r-2}/n$, hence
+\[
+\sum_n|b_{n+1}-b_n|<\infty\quad\text{uniformly}.
+\]
+The partial sums of $y^n$ are bounded by $2/\delta$ as in Lemma~\ref{lem:radial}. Summation by parts therefore bounds the tails $\sum_{n>M}$ uniformly in $\rho$, and the finite partial sums are continuous in $\rho$.
+\end{proof}
+
+\begin{theorem}[Regularization-free cyclotomic boundary]\label{thm:boundary}
+Let $\xi\in\mu_N^r$, $t_j\in\Q\setminus\Z_{>0}$, and $(s_1,\xi_1)\ne(1,1)$. Then $\cS^\partial(\Hs_\s(\xi;\tb))$ contains no dangerous symbol, and
+\[
+\Hs_\s(\xi;\tb)=\ev\,\cS^\partial(\Hs_\s(\xi;\tb)).
+\]
+This is a finite $\Q(\mu_{qN})$-linear combination of convergent level-$qN$ cyclotomic multiple polylogarithms of depth $\le r$ and weight $\le w$. Its top-depth part is \eqref{eq:top} with $z=\xi$.
+\end{theorem}
+
+\begin{proof}
+\emph{No dangerous symbols.} If $s_1\ge2$, apply Proposition~\ref{prop:balanced} to the chain \eqref{eq:H}. If $s_1=1$ and $\xi_1\ne1$, apply Lemma~\ref{lem:structure} with $P=\{t_1\}$. The symbols of $\mathcal U_\ell$ have first argument $\alpha_1^\partial\omega^\ell$, whose $q$th power is $\xi_1\ne1$, so none is dangerous. The part $\mathcal V$ is handled by Proposition~\ref{prop:balanced}.
+
+\emph{The limit.} For $\rho<1$, Theorem~\ref{thm:main} gives $\Hs(\z(\rho);\tb)=\ev\cS_\rho$. As $\rho\to1^-$:
+\begin{itemize}[leftmargin=1.5em]
+\item the left side tends to $\Hs_\s(\xi;\tb)$, by Lemma~\ref{lem:Hlimit};
+\item the non-dangerous terms tend to their boundary values, by Lemma~\ref{lem:radial}(a), since the coefficients are monomials in $\rho$;
+\item each dangerous group $B_g(\rho)\mathcal W_g(\rho)$ tends to $0$. Indeed $B_g(1)=0$ gives $B_g(\rho)=O(1-\rho)$, while $\mathcal W_g(\rho)=O((1+|\log(1-\rho)|)^r)$ by Lemma~\ref{lem:radial}(b), because $1-\rho^\nu\asymp1-\rho$. \qedhere
+\end{itemize}
+\end{proof}
+
+\subsection{The excluded case: a depth-one computation}
+When $(s_1,\xi_1)=(1,1)$ the series diverges. The following proposition shows that dangerous symbols then occur already in depth one, and what replaces Theorem~\ref{thm:boundary} there.
+
+\begin{proposition}[Depth one]\label{prop:reg1}
+Let $t=c/q-\kappa\notin\Z_{>0}$. Then
+\[
+\cS^\partial(\Hs_1(1;t))=\sum_{a\in\Gamma(\lfl t\rfl)}\frac{\epsilon(a)}{a-t}[\varnothing]+\sum_{\ell=0}^{q-1}\omega^{\ell c}[1;\omega^\ell].
+\]
+As $M\to\infty$,
+\[
+\sum_{n=1}^{M}\frac1{n-t}=T_M+\log q+\sum_{a}\frac{\epsilon(a)}{a-t}+\sum_{\ell=1}^{q-1}\omega^{\ell c}\Li_1(\omega^\ell)+o(1),\qquad T_M=\log M+\gamma .
+\]
+Thus the stuffle-regularized value is obtained from $\cS^\partial$ by sending $[1;1]\mapsto T+\log q=T-\sum_{\ell\ne0}\Li_1(\omega^\ell)$, rather than $[1;1]\mapsto T$.
+\end{proposition}
+
+\begin{proof}
+The finite defects are constant once $M$ is large. On the lifted part,
+\[
+\sum_{t<n\le M}\frac{1}{n-t}=\sum_{\ell}\omega^{\ell c}\sum_{u\le q(M-t)}\frac{\omega^{\ell u}}{u}.
+\]
+The term $\ell=0$ is a harmonic number $H_{\lfl q(M-t)\rfl}=\log M+\log q+\gamma+o(1)$. The terms $\ell\ne0$ converge to $\Li_1(\omega^\ell)$. Finally $\prod_{\ell=1}^{q-1}(1-\omega^\ell)=q$.
+\end{proof}
+
+\begin{remark}
+In higher depth the same mismatch arises: the lifted chain truncates the first variable at $u_1\le q(M-t_1)$, not at $n_1\le M$. We expect the stuffle-regularized value to be obtained from $\cS^\partial$ by the shift $T\mapsto T+\log q$ in every dangerous symbol. Proving this needs uniform control of the truncated walls, and we leave it as Question~\ref{q:reg}.
+\end{remark}
+
+%=====================================================================
+\section{Examples}\label{sec:examples}
+%=====================================================================
+
+\subsection{A positive nonintegral shift}
+Let $\alpha^2=z$. Here $\Gamma(\lfl3/2\rfl)=\{1\}$ with sign $+$, so the coordinate wall $n=1$ is crossed, and
+\begin{equation}\label{eq:ex1}
+\Hs_2(z;3/2)=4z+2z\alpha\{\Li_2(\alpha)-\Li_2(-\alpha)\}.
+\end{equation}
+
+\subsection{A depth-three example, reduced completely}\label{ex:depth3}
+Take $q=2$, $\s=(2,1,1)$, $\tb=(0,\tfrac12,-1)$, unit colours, and
+\[
+X=\sum_{n_1>n_2>n_3>0}\frac{1}{n_1^2(n_2-\frac12)(n_3+1)} .
+\]
+\emph{Walls.} In two-chamber form, $\lfl\tau_1\rfl=\lfl-\tfrac12\rfl=-1$ gives the residue-equality wall $n_1=n_2$ (sign $-$). Next, $\lfl\tau_2\rfl=\lfl\tfrac32\rfl=1$ gives the gap wall $n_2-n_3=1$ (sign $+$). Finally $\lfl t_3\rfl=-1$ gives the coordinate wall $n_3=0$ (sign $-$). Thus
+\begin{equation}\label{eq:ex2walls}
+X=F-C_{12}+W_{23}-W_3-2\{\zeta(2)-1\},
+\end{equation}
+with
+\[
+F=2\sum_{a,b,c\in\{0,1\}}(-1)^b\Li_{2,1,1}((-1)^a,(-1)^b,(-1)^c),
+\]
+\[
+C_{12}=\sum_{m>n>0}\frac{1}{m^2(m-\frac12)n},\qquad
+W_{23}=\sum_{m_1>m>0}\frac{1}{m_1^2(m-\frac12)m},\qquad
+W_3=\sum_{m_1>m_2>1}\frac{1}{m_1^2(m_2-\frac12)} .
+\]
+The last term of \eqref{eq:ex2walls} is the compatible intersection $W_{3,23}$.
+
+\emph{Complete reduction.} Carrying out Definition~\ref{def:alg} to the end is a finite computation in exact arithmetic over $\Q$; a script performing it is provided as supplementary material (see the Declarations). It gives
+\begin{multline*}
+X=F+2\big\{\zeta(3)-\Li_{2,1}(1,-1)+\Li_{2,1}(-1,1)-\Li_{2,1}(-1,-1)\big\}\\
++8\big\{\Li_{1,1}(-1,1)+\Li_{1,1}(-1,-1)\big\}+2\zeta(2)-8\log2 .
+\end{multline*}
+
+The leading wall $C_{12}$ has letter
+\[
+m^{-2}(m-\tfrac12)^{-1}=4(m-\tfrac12)^{-1}-4m^{-1}-2m^{-2}.
+\]
+Its simple-pole residues $4$ and $-4$ sum to zero, as in Proposition~\ref{prop:balanced}. Accordingly, no divergent symbol $\Li_{1,\dots}(1,\dots)$ survives, which illustrates Theorem~\ref{thm:boundary}.
+
+\subsection{Canonical wall constants}
+The following sums are canonical equality walls $C_E(\cb)$ of the depth-one straightening, each with unit colours:
+\begin{itemize}[leftmargin=1.5em]
+\item \eqref{eq:w1} is $q=3$, $\cb=(0,2)$, $\s=(1,1)$, $E=\{1\}$;
+\item \eqref{eq:w2} is $q=3$, $\cb=(0,2)$, $\s=(2,1)$;
+\item \eqref{eq:w3} is $q=4$, $\cb=(1,3)$, $\s=(2,1)$;
+\item \eqref{eq:w4} is a genuine three-factor wall, with $q=3$, $\cb=(0,1,2)$, $\s=(2,1,1)$, $E=\{1,2\}$.
+\end{itemize}
+\begin{align}
+\sum_{n\ge1}\frac1{n(n-\frac23)}&=\frac{3\pi}{4\sqrt3}+\frac94\log3,\label{eq:w1}\\
+\sum_{n\ge1}\frac1{n^2(n-\frac23)}&=-\frac32\zeta(2)+\frac{9\pi}{8\sqrt3}+\frac{27}{8}\log3,\label{eq:w2}\\
+\sum_{n\ge1}\frac1{(n-\frac14)^2(n-\frac34)}&=4\pi-2\pi^2+16G,\label{eq:w3}\\
+\sum_{n\ge1}\frac1{n^2(n-\frac13)(n-\frac23)}&=\frac92\zeta(2)+\frac{135\pi}{8\sqrt3}-\frac{243}{8}\log3,\label{eq:w4}
+\end{align}
+where $G$ is Catalan's constant.
+
+For \eqref{eq:w1}, the algorithm gives
+\[
+\tfrac32\big(\Phi((x-\tfrac23)^{-1})-\Phi(x^{-1})\big)=\tfrac32\sum_{\ell=1}^{2}(\omega^{2\ell}-1)[1;\omega^\ell]:
+\]
+the dangerous $\ell=0$ modes cancel. With $\Li_1(e^{2\pi i/3})=-\tfrac12\log3+\tfrac{\pi i}{6}$ this yields \eqref{eq:w1}. The others follow in the same way.
+
+%=====================================================================
+\section{Open problems}\label{sec:outlook}
+%=====================================================================
+
+\begin{question}[Motivic lift]
+The identities used are of three kinds: indicator identities, partial fractions, and the root-of-unity filter (equivalently, distribution relations). Do they lift to motivic cyclotomic multiple polylogarithms? If so, Theorems~\ref{thm:depthrm1} and \ref{thm:topweight} would become statements about the motivic depth and weight filtrations \cite{Gon98,Del10,Gla16}. One could then ask, for $N\in\{2,3,4,8\}$ where bases are known, for an intrinsic description of the depth-graded image of the Hurwitz--Lerch values.
+\end{question}
+
+\begin{question}[Regularization]\label{q:reg}
+Extend Proposition~\ref{prop:reg1} to all depths. Is the stuffle-regularized value equal to $\ev\cS^\partial$ with $[1;1]$-type divergences shifted by $T\mapsto T+\log q$?
+\end{question}
+
+\begin{question}[Complexity]
+Bound the running time of $\cS$ in terms of $r$, $q$ and $\max_j|\lfl t_j\rfl|$, and decide whether the support bound of Proposition~\ref{prop:complexity} is attained up to constants.
+\end{question}
+
+%=====================================================================
+\appendix
+\section{A staircase evaluation and depth collapse}\label{app:staircase}
+%=====================================================================
+
+For $r\ge1$ put
+\begin{equation}\label{eq:Sr}
+S_r=\sum_{n_1>\dots>n_r>0}\frac{1}{n_1^2(n_2+1)\cdots(n_r+r-1)} .
+\end{equation}
+This is \eqref{eq:H} with $q=1$, unit colours, $\s=(2,1,\dots,1)$ and $t_j=1-j$. Theorem~\ref{thm:main} predicts a combination of multiple zeta values of depth $\le r$. Theorem~\ref{thm:topweight} applies with $I^+=\{1,\dots,r-1\}$ (all $\tau_i=1$), and gives the top-weight part
+\[
+\sum_{B}\zeta(\text{contraction of }(2,1,\dots,1)\text{ along }B)=\zeta^\star(2,\{1\}^{r-1})=r\,\zeta(r+1)
+\]
+by \cite{OZ08}. We now show that the full value collapses to depth one.
+
+The substitution $m_j=n_j+j-1$ gives $m_1\ge\dots\ge m_r\ge r$. Put
+\[
+A_d(R)=\sum_{m_1\ge\dots\ge m_d\ge R}\frac{1}{m_1^2m_2\cdots m_d},\qquad G_R(t)=\sum_{d\ge1}A_d(R)t^{d-1}.
+\]
+Then
+\begin{equation}\label{eq:GR}
+G_R(t)=\sum_{n\ge R}\frac{1}{n^2}\prod_{k=R}^{n}\Big(1-\frac tk\Big)^{-1}.
+\end{equation}
+Let $\psi'(z)=\sum_{n\ge0}(n+z)^{-2}$. The identity $\zeta^\star(2,\{1\}^m)=(m+1)\zeta(m+2)$ \cite{OZ08} gives $G_1(t)=\psi'(1-t)$. Multiplying by $\prod_{k=1}^{R-1}(1-t/k)$ and separating the terms with $n<R$ gives
+\begin{equation}\label{eq:GR2}
+G_R(t)=\prod_{k=1}^{R-1}\Big(1-\frac tk\Big)\psi'(1-t)-\sum_{n=1}^{R-1}\frac1{n^2}\prod_{k=n+1}^{R-1}\Big(1-\frac tk\Big).
+\end{equation}
+For $R=r$ the finite correction has degree at most $r-2$ in $t$. Since $S_r=A_r(r)$ is the coefficient of $t^{r-1}$, we obtain:
+
+\begin{theorem}[Staircase evaluation]\label{thm:staircase}
+For $r\ge1$,
+\[
+S_r=[t^{r-1}]\Big\{\prod_{k=1}^{r-1}\Big(1-\frac tk\Big)\psi'(1-t)\Big\}=\sum_{j=0}^{r-1}(-1)^j(r-j)\,e_j\Big(1,\frac12,\dots,\frac1{r-1}\Big)\zeta(r-j+1),
+\]
+where $e_j$ is the elementary symmetric polynomial ($e_0=1$). For example,
+\[
+S_3=3\zeta(4)-3\zeta(3)+\tfrac12\zeta(2),\qquad S_4=4\zeta(5)-\tfrac{11}{2}\zeta(4)+2\zeta(3)-\tfrac16\zeta(2).
+\]
+\end{theorem}
+
+The $j=0$ term is the top-weight part predicted by Theorem~\ref{thm:topweight}. The remaining terms show that every lower-weight part also collapses to single zeta values. This collapse is not predicted by the general depth bounds, and it would be interesting to characterize the shift patterns $\tb$ that produce it. We have not attempted a systematic literature search for \eqref{eq:GR2} in the context of lower-bounded zeta-star sums, and we make no novelty claim for Theorem~\ref{thm:staircase}.
+
+\section*{Declarations}
+\noindent\textbf{Funding.} Not applicable.\\
+\textbf{Competing interests.} The author declares no competing interests.\\
+\textbf{Data and code availability.} No datasets were generated or analyzed. A script carrying out the algorithm of Definition~\ref{def:alg} in exact arithmetic, used for the complete reduction in Example~\ref{ex:depth3}, is provided as supplementary material.\\
+\textbf{Author contributions.} The sole author developed the results, prepared the proofs, and wrote the manuscript.
+
+\begin{thebibliography}{ABS11}\small
+
+\bibitem[ABS11]{ABS11} J.~Ablinger, J.~Bl\"umlein and C.~Schneider, \emph{Harmonic sums and polylogarithms generated by cyclotomic polynomials}, J. Math. Phys. \textbf{52} (2011), 102301. arXiv:1105.6063.
+
+\bibitem[Del10]{Del10} P.~Deligne, \emph{Le groupe fondamental unipotent motivique de $G_m-\mu_N$, pour $N=2,3,4,6$ ou $8$}, Publ. Math. IH\'ES \textbf{112} (2010), 101--141.
+
+\bibitem[EM07]{EM07} J.-Y.~Enjalbert and Hoang Ngoc Minh, \emph{Analytic and combinatoric aspects of Hurwitz polyz\^etas}, J. Th\'eor. Nombres Bordeaux \textbf{19} (2007), no.~3, 595--640.
+
+\bibitem[EM12]{EM12} J.-Y.~Enjalbert and Hoang Ngoc Minh, \emph{Combinatorial study of colored Hurwitz polyz\^etas}, Discrete Math. \textbf{312} (2012), no.~24, 3489--3497.
+
+\bibitem[Gla16]{Gla16} C.~Glanois, \emph{Motivic unipotent fundamental groupoid of $\mathbb{G}_m\ltimes\mu_N$ for $N=2,3,4,6,8$ and Galois descents}, J. Number Theory \textbf{160} (2016), 334--384.
+
+\bibitem[Gon98]{Gon98} A.~B.~Goncharov, \emph{Multiple polylogarithms, cyclotomy and modular complexes}, Math. Res. Lett. \textbf{5} (1998), 497--516.
+
+\bibitem[GS18]{GS18} S.~Gun and B.~Saha, \emph{Multiple Lerch zeta functions and an idea of Ramanujan}, Michigan Math. J. \textbf{67} (2018), no.~2, 267--287.
+
+\bibitem[Hof19]{Hof19} M.~E.~Hoffman, \emph{An odd variant of multiple zeta values}, Commun. Number Theory Phys. \textbf{13} (2019), no.~3, 529--567. arXiv:1612.05232.
+
+\bibitem[Iha+24]{Iha+24} K.~Ihara, Y.~Kusunoki, Y.~Nakamura and H.~Saeki, \emph{Generating function of multiple polylog of Hurwitz type}, Canad. J. Math. \textbf{76} (2024), no.~1, 1--17.
+
+\bibitem[KT20]{KT20} M.~Kaneko and H.~Tsumura, \emph{On multiple zeta values of level two}, Tsukuba J. Math. \textbf{44} (2020), no.~2, 213--234.
+
+\bibitem[LX26]{LX26} J.~Li and C.~Xu, \emph{Residue theorem, regularization and parity theorem}, arXiv:2601.05024 (2026).
+
+\bibitem[MN25]{MN25} K.~Matsumoto and M.~Nakasuji, \emph{Schur multiple zeta-functions of Hurwitz type}, arXiv:2503.14850 (2025).
+
+\bibitem[MS06]{MS06} M.~R.~Murty and K.~Sinha, \emph{Multiple Hurwitz zeta functions}, in: Multiple Dirichlet Series, Automorphic Forms, and Analytic Number Theory, Proc. Sympos. Pure Math. \textbf{75}, Amer. Math. Soc., 2006, 135--156.
+
+\bibitem[OZ08]{OZ08} Y.~Ohno and W.~Zudilin, \emph{Zeta stars}, Commun. Number Theory Phys. \textbf{2} (2008), no.~2, 325--347.
+
+\bibitem[Pha26]{Pha26} J.~Phadikar, \emph{Monoidal alphabets for generalized harmonic sums}, arXiv:2605.21525 (2026).
+
+\bibitem[Rac02]{Rac02} G.~Racinet, \emph{Doubles m\'elanges des polylogarithmes multiples aux racines de l'unit\'e}, Publ. Math. IH\'ES \textbf{95} (2002), 185--231.
+
+\bibitem[Rui25]{Rui25} H.~Rui, \emph{Contour integrations and parity results of Hurwitz-type cyclotomic Euler sums}, arXiv:2601.00035 (2025).
+
+\bibitem[Ter04]{Ter04} T.~Terasoma, \emph{Rational convex cones and cyclotomic multiple zeta values}, arXiv:math/0410306 (2004).
+
+\bibitem[Xu26]{Xu26} C.~Xu, \emph{Symmetry results for cyclotomic multiple Hurwitz zeta values via contour integrals}, arXiv:2602.10391 (2026).
+
+\bibitem[XZ22]{XZ22} C.~Xu and J.~Zhao, \emph{Variants of multiple zeta values with even and odd summation indices}, Math. Z. \textbf{300} (2022), 3109--3142. doi:10.1007/s00209-021-02889-2.
+
+\bibitem[Zha16]{Zha16} J.~Zhao, \emph{Multiple Zeta Functions, Multiple Polylogarithms and Their Special Values}, World Scientific, 2016.
+
+\end{thebibliography}
+\end{document}
